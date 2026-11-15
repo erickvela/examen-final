@@ -1,0 +1,100 @@
+<main class="min-h-screen bg-[#141414] pb-16 text-white">
+  <div class="mx-auto max-w-7xl px-5 pt-8 sm:px-10">
+    <a
+      class="inline-flex items-center gap-2 text-sm font-semibold text-neutral-300 transition hover:text-rick-green"
+      routerLink="/browse"
+    >
+      <span aria-hidden="true">←</span> Volver al catálogo
+    </a>
+  </div>
+
+  @if (errorMessage) {
+    <p
+      class="mx-auto mt-8 max-w-7xl rounded-lg border border-red-900/70 bg-red-950/40 p-4 text-red-300"
+      role="alert"
+    >
+      {{ errorMessage }}
+    </p>
+  } @else if (loading) {
+    <p class="mx-auto mt-10 max-w-7xl px-5 text-neutral-400 sm:px-10">
+      Cargando episodio…
+    </p>
+  } @else if (episode; as item) {
+    <section class="relative isolate mt-6 flex min-h-[26rem] items-end overflow-hidden sm:min-h-[34rem]">
+      @if (getCoverCharacter(item); as cover) {
+        <img
+          class="absolute inset-0 -z-20 h-full w-full object-cover object-[center_30%] opacity-40"
+          [src]="cover.image"
+          [alt]="cover.name"
+        />
+      } @else {
+        <div
+          class="absolute inset-0 -z-20 bg-gradient-to-br from-green-950 via-neutral-900 to-red-950"
+        ></div>
+      }
+      <div class="absolute inset-0 -z-10 bg-gradient-to-r from-[#141414] via-[#141414]/75 to-transparent"></div>
+      <div class="absolute inset-0 -z-10 bg-gradient-to-t from-[#141414] via-transparent to-black/20"></div>
+
+      <div class="mx-auto w-full max-w-7xl px-5 pb-12 sm:px-10 sm:pb-16">
+        <p class="mb-3 text-sm font-bold uppercase tracking-[0.3em] text-rick-green">
+          {{ item.episode }}
+        </p>
+        <h1 class="max-w-3xl text-4xl font-black tracking-tight sm:text-6xl">
+          {{ item.name }}
+        </h1>
+        <p class="mt-4 flex items-center gap-3 text-sm text-neutral-300 sm:text-base">
+          <span class="rounded bg-white/10 px-2 py-1 font-semibold text-white">
+            {{ item.episode }}
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>Emitido: {{ item.air_date }}</span>
+        </p>
+      </div>
+    </section>
+
+    <section class="mx-auto mt-8 max-w-7xl px-5 sm:px-10">
+      <div class="mb-5">
+        <p class="text-xs font-bold uppercase tracking-[0.25em] text-red-500">
+          En esta aventura
+        </p>
+        <h2 class="mt-1 text-2xl font-bold sm:text-3xl">
+          Personajes <span class="text-neutral-500">({{ item.characters.length }})</span>
+        </h2>
+      </div>
+
+      @if (item.characters.length === 0) {
+        <p class="rounded-lg border border-white/10 bg-neutral-900 p-5 text-neutral-400">
+          No hay personajes disponibles para este episodio.
+        </p>
+      } @else {
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          @for (character of item.characters; track $index) {
+            @if (isCharacter(character)) {
+              <a
+                class="group overflow-hidden rounded-xl border border-white/5 bg-neutral-900 transition duration-300 hover:z-10 hover:scale-[1.03] hover:border-rick-green/60 hover:shadow-xl hover:shadow-black/40"
+                [routerLink]="['/character', character.id]"
+              >
+                <div class="aspect-square overflow-hidden bg-neutral-800">
+                  <img
+                    class="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                    [src]="character.image"
+                    [alt]="character.name"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="p-3 sm:p-4">
+                  <h3 class="truncate font-bold transition group-hover:text-rick-green">
+                    {{ character.name }}
+                  </h3>
+                  <p class="mt-1 truncate text-xs text-neutral-400">
+                    {{ character.status }} · {{ character.species }}
+                  </p>
+                </div>
+              </a>
+            }
+          }
+        </div>
+      }
+    </section>
+  }
+</main>

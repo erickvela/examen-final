@@ -1,0 +1,179 @@
+<header
+  class="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[#141414]/90 px-5 backdrop-blur-lg sm:px-10"
+>
+  <nav class="mx-auto flex h-16 max-w-7xl items-center gap-8" aria-label="Navegación principal">
+    <a class="shrink-0 text-xl font-black tracking-tight" routerLink="/browse">
+      <span class="text-red-600">RICK</span><span class="text-white">&amp;</span
+      ><span class="text-rick-green">MORTY</span>
+    </a>
+
+    <div class="flex flex-1 items-center gap-6 text-sm">
+      <a class="font-semibold text-white transition hover:text-rick-green" href="#episodes">
+        Inicio / Episodios
+      </a>
+      <a class="hidden text-neutral-300 transition hover:text-white sm:inline" href="#characters">
+        Catálogo de personajes
+      </a>
+    </div>
+
+    <button
+      class="shrink-0 rounded-md border border-white/20 px-3 py-2 text-xs font-semibold text-neutral-200 transition hover:border-red-500 hover:text-white sm:px-4 sm:text-sm"
+      type="button"
+      (click)="logout()"
+    >
+      Cerrar sesión
+    </button>
+  </nav>
+</header>
+
+<main class="min-h-screen overflow-hidden bg-[#141414] pb-20 pt-16 text-white">
+  <section class="relative isolate flex min-h-[28rem] items-end overflow-hidden sm:min-h-[34rem]">
+    @if (featuredCharacter; as featured) {
+      <img
+        class="absolute inset-0 -z-20 h-full w-full object-cover object-[center_30%] opacity-50"
+        [src]="featured.image"
+        [alt]="featured.name"
+      />
+      <div
+        class="absolute inset-0 -z-10 bg-gradient-to-r from-[#141414] via-[#141414]/75 to-transparent"
+      ></div>
+      <div class="absolute inset-0 -z-10 bg-gradient-to-t from-[#141414] via-transparent to-black/20"></div>
+
+      <div class="mx-auto w-full max-w-7xl px-6 pb-12 sm:px-10 sm:pb-16">
+        <p class="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-rick-green">
+          Personaje destacado
+        </p>
+        <h1 class="max-w-2xl text-5xl font-black tracking-tight sm:text-7xl">
+          {{ featured.name }}
+        </h1>
+        <p class="mt-4 max-w-xl text-sm text-neutral-300 sm:text-base">
+          {{ featured.status }} · {{ featured.species }} · {{ featured.location.name }}
+        </p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a
+            class="rounded-md bg-white px-5 py-3 text-sm font-bold text-black transition hover:bg-neutral-200"
+            [routerLink]="['/character', featured.id]"
+          >
+            <span aria-hidden="true">▶</span>
+            <span class="ml-2">Ver personaje</span>
+          </a>
+          <a
+            class="rounded-md bg-neutral-700/80 px-5 py-3 text-sm font-bold text-white transition hover:bg-neutral-600"
+            href="#episodes"
+          >
+            Explorar episodios
+          </a>
+        </div>
+      </div>
+    } @else {
+      <div class="mx-auto w-full max-w-7xl px-6 pb-12 sm:px-10 sm:pb-16">
+        <p class="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-rick-green">
+          Rick &amp; Morty
+        </p>
+        <h1 class="text-5xl font-black tracking-tight sm:text-7xl">El multiverso te espera</h1>
+        <p class="mt-4 text-neutral-300">Explora episodios y personajes de otra dimensión.</p>
+      </div>
+    }
+  </section>
+
+  <section id="episodes" class="scroll-mt-20 px-6 pt-3 sm:px-10">
+    <div class="mx-auto max-w-7xl">
+      <div class="mb-4 flex items-end justify-between">
+        <div>
+          <p class="text-xs font-bold uppercase tracking-[0.25em] text-red-500">Temporadas y aventuras</p>
+          <h2 class="mt-1 text-2xl font-bold sm:text-3xl">Episodios</h2>
+        </div>
+        @if (episodes.length) {
+          <span class="text-sm text-neutral-500">{{ episodes.length }} disponibles</span>
+        }
+      </div>
+
+      @if (episodesError) {
+        <p class="rounded-lg border border-red-900/70 bg-red-950/40 p-4 text-sm text-red-300" role="alert">
+          {{ episodesError }}
+        </p>
+      } @else if (episodesLoading) {
+        <p class="py-8 text-sm text-neutral-400">Cargando episodios…</p>
+      } @else {
+        <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden pb-6 pt-2">
+          @for (episode of episodes; track episode.id) {
+            <a
+              class="group w-64 shrink-0 snap-start overflow-hidden rounded-lg border border-white/5 bg-neutral-900 transition duration-300 hover:z-10 hover:scale-105 hover:border-rick-green/60 hover:shadow-xl hover:shadow-black/40 sm:w-80"
+              [routerLink]="['/episode', episode.id]"
+            >
+              <div
+                class="relative flex h-36 items-end overflow-hidden bg-gradient-to-br from-green-950 via-neutral-800 to-red-950 p-4 sm:h-44"
+              >
+                <span
+                  class="absolute -right-4 -top-8 select-none text-9xl font-black text-white/[0.04] transition duration-300 group-hover:scale-110"
+                  aria-hidden="true"
+                >
+                  {{ episode.episode.slice(-2) }}
+                </span>
+                <span class="relative rounded bg-black/50 px-2 py-1 text-xs font-bold text-rick-green">
+                  {{ episode.episode }}
+                </span>
+              </div>
+              <div class="p-4">
+                <h3 class="truncate text-base font-bold transition group-hover:text-rick-green">
+                  {{ episode.name }}
+                </h3>
+                <p class="mt-1 text-sm text-neutral-400">{{ episode.air_date }}</p>
+              </div>
+            </a>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <section id="characters" class="mt-10 scroll-mt-20 px-6 sm:px-10">
+    <div class="mx-auto max-w-7xl">
+      <div class="mb-4">
+        <p class="text-xs font-bold uppercase tracking-[0.25em] text-rick-green">Conoce a los habitantes</p>
+        <h2 class="mt-1 text-2xl font-bold sm:text-3xl">Catálogo de personajes</h2>
+      </div>
+
+      @if (charactersError) {
+        <p class="rounded-lg border border-red-900/70 bg-red-950/40 p-4 text-sm text-red-300" role="alert">
+          {{ charactersError }}
+        </p>
+      } @else if (charactersLoading) {
+        <p class="py-8 text-sm text-neutral-400">Cargando personajes…</p>
+      } @else {
+        <div class="flex snap-x snap-mandatory gap-4 overflow-x-auto overflow-y-hidden pb-6 pt-2">
+          @for (character of characters; track character.id) {
+            <a
+              class="group w-40 shrink-0 snap-start overflow-hidden rounded-lg border border-white/5 bg-neutral-900 transition duration-300 hover:z-10 hover:scale-105 hover:border-rick-green/60 hover:shadow-xl hover:shadow-black/40 sm:w-52"
+              [routerLink]="['/character', character.id]"
+            >
+              <div class="aspect-square overflow-hidden bg-neutral-800">
+                <img
+                  class="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                  [src]="character.image"
+                  [alt]="character.name"
+                  loading="lazy"
+                />
+              </div>
+              <div class="p-3 sm:p-4">
+                <h3 class="truncate text-sm font-bold transition group-hover:text-rick-green sm:text-base">
+                  {{ character.name }}
+                </h3>
+                <p class="mt-1 flex items-center gap-2 text-xs text-neutral-400">
+                  <span
+                    class="h-2 w-2 rounded-full"
+                    [class.bg-green-400]="character.status === 'Alive'"
+                    [class.bg-red-500]="character.status === 'Dead'"
+                    [class.bg-neutral-400]="character.status !== 'Alive' && character.status !== 'Dead'"
+                    aria-hidden="true"
+                  ></span>
+                  {{ character.status }} · {{ character.species }}
+                </p>
+              </div>
+            </a>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</main>
